@@ -41,52 +41,6 @@ def test_db_connection_creation():
 
 
 @pytest.mark.skip(reason="Local test only")
-def test_run():
-    """
-    method to test a run of retrieving catalog data from the DB and pushing it to PSC.
-
-    :return:
-    """
-    # get the PSC sync object
-    psc_sync = PSCSync()
-
-    # get the catalog data
-    success: bool = psc_sync.run('4358-2023050106-namforecast')
-
-    # check the return code
-    assert not success
-
-
-@pytest.mark.skip(reason="Local test only")
-def test_push_to_psc():
-    """
-    method to test the push of information to a PSC web service
-
-    :return:
-    """
-    # get the PSC sync object
-    psc_sync = PSCSync()
-
-    # set the expected number of records returned
-    limit = 5
-
-    # get the catalog data
-    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(limit=limit)
-
-    # get the unique keys in the dict
-    catalogs: list = list(set('-'.join(x['member_def']['id'].split('-')[:-1]) for x in catalog_data))
-
-    # check the record count
-    assert len(catalogs) == limit
-
-    # push the data to PSC
-    success: bool = psc_sync.push_to_psc(catalog_data=catalog_data)
-
-    # check to see if it went in
-    assert success
-
-
-@pytest.mark.skip(reason="Local test only")
 def test_get_catalogs():
     """
     method to test getting catalog data given a run id
@@ -148,3 +102,49 @@ def test_get_catalogs():
 
     # check the record count
     assert catalog_data == 0
+
+
+@pytest.mark.skip(reason="Local test only")
+def test_push_to_psc():
+    """
+    method to test the push of information to a PSC web service
+
+    :return:
+    """
+    # get the PSC sync object
+    psc_sync = PSCSync()
+
+    # set the expected number of records returned
+    limit = 5
+
+    # get the catalog data
+    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(limit=limit)
+
+    # get the unique keys in the dict
+    catalogs: list = list(set('-'.join(x['member_def']['id'].split('-')[:-1]) for x in catalog_data))
+
+    # check the record count
+    assert len(catalogs) == limit
+
+    # push the data to PSC
+    success: bool = psc_sync.push_to_psc(catalog_data=catalog_data)
+
+    # check to see if it went in
+    assert success
+
+
+@pytest.mark.skip(reason="Local test only")
+def test_run():
+    """
+    method to test a run of retrieving catalog data from the DB and pushing it to PSC.
+
+    :return:
+    """
+    # get the PSC sync object
+    psc_sync = PSCSync()
+
+    # get the catalog data
+    success: bool = psc_sync.run('4358-2023050106-namforecast')
+
+    # check the return code
+    assert not success

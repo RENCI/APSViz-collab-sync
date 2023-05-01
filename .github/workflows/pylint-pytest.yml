@@ -1,0 +1,65 @@
+# SPDX-FileCopyrightText: 2022 Renaissance Computing Institute. All rights reserved.
+# SPDX-FileCopyrightText: 2023 Renaissance Computing Institute. All rights reserved.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: LicenseRef-RENCI
+# SPDX-License-Identifier: MIT
+
+name: Pylint and Pytest the codebase
+
+# trigger event is a push to the main repo branch (or a manual launch)
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+
+# job definitions
+jobs:
+  # runs pylint
+  lint:
+    name: Execute pylint
+    runs-on: ubuntu-latest
+
+    # job steps
+    steps:
+      # checkout the codebase
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      # build the image
+      - name: Build docker image
+        run: docker build -t collab-sync-testing -f Dockerfile.test .
+
+      # run pylint
+      - name: Run pylint and get the output
+        run: |
+          echo 'LINT_OUTPUT<<EOF' >> $GITHUB_ENV
+          echo "$(docker run collab-sync-testing pylint --rcfile=.pylintrc --recursive=y ./)" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+  # runs pytest
+  test:
+    name: Execute pytest
+    runs-on: ubuntu-latest
+
+    # job steps
+    steps:
+      # checkout the codebase
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      # build the image
+      - name: Build docker image
+        run: docker build -t collab-sync-testing -f Dockerfile.test .
+
+      # run pylint
+      - name: Run tests and get output
+        run: |
+          echo 'TEST_OUTPUT<<EOF' >> $GITHUB_ENV
+          echo "$(docker run collab-sync-testing pytest --cov)" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      # check for any issues
+      - name: Exit if there are any test failures
+        run: '[[ $TEST_OUTPUT != *FAILED* ]]'

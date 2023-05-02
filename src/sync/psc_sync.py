@@ -14,7 +14,6 @@
 import os
 import requests
 
-
 from src.common.logger import LoggingUtil
 from src.common.pg_impl import PGImplementation
 
@@ -24,6 +23,7 @@ class PSCSync:
     Class that contains methods to get catalog member records for PSC.
 
     """
+
     def __init__(self, _logger=None):
         """
         Initializes this class
@@ -46,9 +46,10 @@ class PSCSync:
         # create a DB connection object
         self.db_info = PGImplementation(db_names, self.logger)
 
-        # load environment variables
+        # load environment variables specific for PSC operations
         self.psc_sync_url = os.getenv('PSC_SYNC_URL')
         self.psc_sync_token = os.environ.get('PSC_SYNC_TOKEN')
+        self.psc_sync_projects = os.environ.get('PSC_SYNC_PROJECTS')
 
     def run(self, run_id: str) -> bool:
         """
@@ -66,12 +67,16 @@ class PSCSync:
 
             # if we got data push it to PSC
             if catalog_data is not None:
-                # make the call to push the data to PSC
-                success = self.push_to_psc(catalog_data, run_id)
+                # make sure that all catalogs are have the proper target project code
+                if self.check_project_codes(catalog_data):
+                    # make the call to push the data to PSC
+                    success = self.push_to_psc(catalog_data, run_id)
 
-                # did it fail
-                if not success:
-                    self.logger.warning('Error: PSC sync failure for run id %s.', run_id)
+                    # did it fail
+                    if not success:
+                        self.logger.warning('Error: PSC sync failure for run id %s.', run_id)
+                else:
+                    self.logger.warning('Warning: One or more catalogs for run id %s were not for PSC.', run_id)
             else:
                 self.logger.warning('Warning: No records found in the database for run id %s.', run_id)
 
@@ -82,6 +87,29 @@ class PSCSync:
             success = False
 
         # return the data to the caller
+        return success
+
+    def check_project_codes(self, catalog_data):
+        """
+        checks to make sure all catalog member entries have PSC project codes.
+
+        :param catalog_data:
+        :return:
+        """
+        # init the return value
+        success: bool = True
+
+        # loop through the catalog entries
+        for catalog in catalog_data:
+            # is this a legit PSC entry
+            if catalog['project_code'] not in self.psc_sync_projects:
+                # set the not found flag
+                success = False
+
+                # no need to continue
+                break
+
+        # return to the caller
         return success
 
     def push_to_psc(self, catalog_data: dict, run_id: str = 'N/A') -> bool:
@@ -96,21 +124,24 @@ class PSCSync:
         success = True
 
         try:
-            # build the URL to the service
-            url = f'{self.psc_sync_url}'
+            # loop through the catalogs
+            for catalog in catalog_data:
+                # execute the post
+                ret_val = requests.post(self.psc_sync_url, auth=self.psc_sync_token, json=catalog, timeout=10)
 
-            # execute the post
-            ret_val = requests.post(url, auth=self.psc_sync_token, json=catalog_data, timeout=10)
+                # was the call unsuccessful. 201 is returned on success for ths one
+                if ret_val.status_code != 200:
+                    # log the error
+                    self.logger.error('Error: PSC sync request failure code %s for run id %s, catalog: %s.', ret_val.status_code, run_id,
+                                      catalog['member_def']['id'])
 
-            # was the call unsuccessful. 201 is returned on success for ths one
-            if ret_val.status_code != 200:
-                # log the error
-                self.logger.error('Error: PSC sync failure code %s for run id %s.', ret_val.status_code, run_id)
+                    # set the failure flag
+                    success = False
 
-                # set the failure flag
-                success = False
+                    # no need to continue
+                    break
         except Exception:
-            self.logger.exception('Exception: PSC sync failure for run id %s.', run_id)
+            self.logger.exception('Exception: PSC sync request failure for run id %s.', run_id)
 
             # set the failure return code
             success = False

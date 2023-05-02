@@ -144,7 +144,7 @@ def test_run():
     psc_sync = PSCSync()
 
     # get the catalog data
-    success: bool = psc_sync.run('4255-05-obs') # '4358-2023050106-namforecast'
+    success: bool = psc_sync.run('4255-05-obs')  # '4358-2023050106-namforecast'
 
     # check the return code
     assert not success

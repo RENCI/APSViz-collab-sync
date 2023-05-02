@@ -21,7 +21,7 @@ Synchronizes data created by the various APSViz applications and processes with 
 [![Linting Pylint](https://img.shields.io/badge/Pylint-%202.17.3-yellowgreen)](https://github.com/PyCQA/pylint)
 [![Pytest](https://img.shields.io/badge/Pytest-%207.3.1-yellowgreen)](https://github.com/pytest-dev/pytest)
 #### Build status...
-[![Pylint and Pytest](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/pylint-test.yml/badge.svg)](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/pylint-test.yml)
+[![Pylint and Pytest](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/pylint-pytest.yml/badge.svg)](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/pylint-test.yml)
 [![Build and push the Docker image](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/image-push.yml/badge.svg)](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/image-push.yml)
 
 ## Description

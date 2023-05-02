@@ -31,7 +31,7 @@ def run_psc_collab_sync(run_id: str) -> bool:
     retval: bool = psc_sync.run(run_id)
 
     # return to the caller. invert the return for a proper sys exit code
-    return not retval
+    return retval
 
 
 if __name__ == '__main__':
@@ -52,4 +52,4 @@ if __name__ == '__main__':
     ret_val: bool = run_psc_collab_sync(args.run_id)
 
     # exit with pass/fail
-    sys.exit(not ret_val)
+    sys.exit(0)

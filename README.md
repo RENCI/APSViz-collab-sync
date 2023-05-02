@@ -8,7 +8,7 @@ SPDX-License-Identifier: MIT
 -->
 ![image not found](renci-logo.png "RENCI")
 
-# APSViz-Archiver
+# APSViz-Collab-sync
 Synchronizes data created by the various APSViz applications and processes with collaborators.
 
 #### Licenses...

@@ -18,9 +18,9 @@ from src.common.logger import LoggingUtil
 from src.common.pg_impl import PGImplementation
 
 
-class PSCSync:
+class PSCDataSync:
     """
-    Class that contains methods to get catalog member records for PSC.
+    Class that contains methods to get catalog member records for PSC data synchronization.
 
     """
 

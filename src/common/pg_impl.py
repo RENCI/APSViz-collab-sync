@@ -17,7 +17,7 @@ from src.common.logger import LoggingUtil
 
 class PGImplementation(PGUtilsMultiConnect):
     """
-        Class that contains DB calls for the Archiver.
+        Class that contains DB calls for the PSC data sync.
 
         Note this class inherits from the PGUtilsMultiConnect class
         which has all the connection and cursor handling.

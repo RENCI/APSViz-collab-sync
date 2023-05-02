@@ -13,7 +13,7 @@
 import sys
 import argparse
 
-from src.sync.psc_sync import PSCSync
+from src.sync.psc_sync import PSCDataSync
 
 
 def run_psc_collab_sync(run_id: str) -> bool:
@@ -24,10 +24,10 @@ def run_psc_collab_sync(run_id: str) -> bool:
     :return:
     """
 
-    # create the archiver
-    psc_sync = PSCSync(run_id)
+    # create the PSC data sync component
+    psc_sync = PSCDataSync()
 
-    # initiate the archiver. return value of True indicates success
+    # initiate the PSC sync. return value of True indicates success
     retval: bool = psc_sync.run(run_id)
 
     # return to the caller. invert the return for a proper sys exit code

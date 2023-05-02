@@ -12,7 +12,7 @@
 """
 import pytest
 from src.common.pg_impl import PGImplementation
-from src.sync.psc_sync import PSCSync
+from src.sync.psc_sync import PSCDataSync
 
 
 @pytest.mark.skip(reason="Local test only")
@@ -48,7 +48,7 @@ def test_get_catalogs():
     :return:
     """
     # get the PSC sync object
-    psc_sync = PSCSync()
+    psc_sync = PSCDataSync()
 
     catalog_data: dict = {}
 
@@ -112,7 +112,7 @@ def test_push_to_psc():
     :return:
     """
     # get the PSC sync object
-    psc_sync = PSCSync()
+    psc_sync = PSCDataSync()
 
     # set the expected number of records returned
     limit = 5
@@ -141,7 +141,7 @@ def test_run():
     :return:
     """
     # get the PSC sync object
-    psc_sync = PSCSync()
+    psc_sync = PSCDataSync()
 
     # get the catalog data
     success: bool = psc_sync.run('4255-05-obs')  # '4358-2023050106-namforecast'

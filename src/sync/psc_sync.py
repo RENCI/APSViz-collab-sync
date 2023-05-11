@@ -47,9 +47,9 @@ class PSCDataSync:
         self.db_info = PGImplementation(db_names, self.logger)
 
         # load environment variables specific for PSC operations
-        self.psc_sync_url = os.getenv('PSC_SYNC_URL')
-        self.psc_sync_token = os.environ.get('PSC_SYNC_TOKEN')
-        self.psc_sync_projects = os.environ.get('PSC_SYNC_PROJECTS')
+        self.psc_sync_url: str = os.getenv('PSC_SYNC_URL')
+        self.psc_auth_header: dict = {'Content-Type': 'application/json', 'Authorization': f'Bearer {os.environ.get("PSC_SYNC_TOKEN")}'}
+        self.psc_sync_projects: str = os.environ.get('PSC_SYNC_PROJECTS')
 
     def run(self, run_id: str) -> bool:
         """
@@ -127,7 +127,7 @@ class PSCDataSync:
             # loop through the catalogs
             for catalog in catalog_data:
                 # execute the post
-                ret_val = requests.post(self.psc_sync_url, auth=self.psc_sync_token, json=catalog, timeout=10)
+                ret_val = requests.post(self.psc_sync_url, headers=self.psc_auth_header, json=catalog, timeout=10)
 
                 # was the call unsuccessful. 201 is returned on success for ths one
                 if ret_val.status_code != 200:

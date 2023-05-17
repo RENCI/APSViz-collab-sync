@@ -67,8 +67,9 @@ def test_get_catalogs():
     # get the catalog data
     catalog_data: dict = psc_sync.db_info.get_catalog_member_records('4358-2023050106-namforecast')
 
-    # check the record count
-    assert len(catalog_data) > 1
+    # check the record counts
+    assert len(catalog_data['catalogs']) > 1
+    assert len(catalog_data['past_runs']) > 1
 
     # set a limit
     limit = 5
@@ -76,11 +77,20 @@ def test_get_catalogs():
     # get the catalog data
     catalog_data: dict = psc_sync.db_info.get_catalog_member_records(None, None, limit)
 
-    # get the unique keys in the dict
-    catalogs: list = list(set('-'.join(x['member_def']['id'].split('-')[:-1]) for x in catalog_data))
+    # get the unique catalog ids
+    catalog_ids = psc_sync.get_unique_catalog_ids(catalog_data)
 
     # check the record count
-    assert len(catalogs) == limit
+    assert len(catalog_ids) == limit
+
+    # get the current count of past runs
+    count = len(catalog_data['past_runs'])
+
+    # remove all non-PSC past run data
+    catalog_data = psc_sync.filter_catalog_past_runs(catalog_data)
+
+    # there should be a difference
+    assert count > len(catalog_data['past_runs'])
 
     # set a limit
     limit = 3
@@ -91,17 +101,18 @@ def test_get_catalogs():
     # check the record count
     assert len(catalog_data) > 1
 
-    # get the unique keys in the dict
-    catalogs: list = list(set('-'.join(x['member_def']['id'].split('-')[:-1]) for x in catalog_data))
+    # get the unique catalog ids
+    catalog_ids = psc_sync.get_unique_catalog_ids(catalog_data)
 
     # check the record count
-    assert len(catalogs) == limit
+    assert len(catalog_ids) == limit
 
     # get the catalog data. An invalid project returns no records
     catalog_data: dict = psc_sync.db_info.get_catalog_member_records(None, 'fail', limit)
 
     # check the record count
-    assert catalog_data == 0
+    assert catalog_data['catalogs'] is None
+    assert catalog_data['past_runs'] is None
 
 
 @pytest.mark.skip(reason="Local test only")
@@ -143,8 +154,14 @@ def test_run():
     # get the PSC sync object
     psc_sync = PSCDataSync()
 
-    # get the catalog data
-    success: bool = psc_sync.run('4255-05-obs')  # '4358-2023050106-namforecast'
+    # get the catalog data and send it to PSC
+    success: bool = psc_sync.run('4358-2023050106-namforecast')  # 4358-2023050106-namforecast 4255-05-obs
+
+    # check the return code
+    assert success
+
+    # get the catalog data and send it to PSC
+    success: bool = psc_sync.run('4255-05-obs')  # 4358-2023050106-namforecast 4255-05-obs
 
     # check the return code
     assert not success

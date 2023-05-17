@@ -66,7 +66,7 @@ class PSCDataSync:
             catalog_data: dict = self.db_info.get_catalog_member_records(run_id)
 
             # if we got data push it to PSC
-            if catalog_data is not None and catalog_data['catalogs'] is not None and catalog_data['past_runs'] is not None:
+            if catalog_data is not None and catalog_data['catalogs'] is not None:
                 # clean up the past run data
                 catalog_data = self.filter_catalog_past_runs(catalog_data)
 
@@ -167,8 +167,10 @@ class PSCDataSync:
         :param catalog_data:
         :return:
         """
-        # filter out non-PSC data from the past_runs
-        catalog_data['past_runs'] = list(filter(lambda item: (item['project_code'] in self.psc_sync_projects), catalog_data['past_runs']))
+        # make sure we have something to filter
+        if catalog_data['past_runs'] is not None:
+            # filter out non-PSC data from the past_runs
+            catalog_data['past_runs'] = list(filter(lambda item: (item['project_code'] in self.psc_sync_projects), catalog_data['past_runs']))
 
         # return to the caller
         return catalog_data

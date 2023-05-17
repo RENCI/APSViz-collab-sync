@@ -49,7 +49,7 @@ class PSCDataSync:
         # load environment variables specific for PSC operations
         self.psc_sync_url: str = os.getenv('PSC_SYNC_URL')
         self.psc_auth_header: dict = {'Content-Type': 'application/json', 'Authorization': f'Bearer {os.environ.get("PSC_SYNC_TOKEN")}'}
-        self.psc_sync_projects: str = os.environ.get('PSC_SYNC_PROJECTS')
+        self.psc_sync_projects: list = os.environ.get('PSC_SYNC_PROJECTS').split(',')
 
     def run(self, run_id: str) -> bool:
         """
@@ -66,7 +66,10 @@ class PSCDataSync:
             catalog_data: dict = self.db_info.get_catalog_member_records(run_id)
 
             # if we got data push it to PSC
-            if catalog_data is not None:
+            if catalog_data is not None and catalog_data['catalogs'] is not None and catalog_data['past_runs'] is not None:
+                # clean up the past run data
+                catalog_data = self.filter_catalog_past_runs(catalog_data)
+
                 # make sure that all catalogs are have the proper target project code
                 if self.check_project_codes(catalog_data):
                     # make the call to push the data to PSC
@@ -89,7 +92,7 @@ class PSCDataSync:
         # return the data to the caller
         return success
 
-    def check_project_codes(self, catalog_data):
+    def check_project_codes(self, catalog_data: dict) -> bool:
         """
         checks to make sure all catalog member entries have PSC project codes.
 
@@ -100,7 +103,7 @@ class PSCDataSync:
         success: bool = True
 
         # loop through the catalog entries
-        for catalog in catalog_data:
+        for catalog in catalog_data['catalogs']:
             # is this a legit PSC entry
             if catalog['project_code'] not in self.psc_sync_projects:
                 # set the not found flag
@@ -124,22 +127,16 @@ class PSCDataSync:
         success = True
 
         try:
-            # loop through the catalogs
-            for catalog in catalog_data:
-                # execute the post
-                ret_val = requests.post(self.psc_sync_url, headers=self.psc_auth_header, json=catalog, timeout=10)
+            # execute the post
+            ret_val = requests.post(self.psc_sync_url, headers=self.psc_auth_header, json=catalog_data, timeout=10)
 
-                # was the call unsuccessful. 201 is returned on success for ths one
-                if ret_val.status_code != 200:
-                    # log the error
-                    self.logger.error('Error: PSC sync request failure code %s for run id %s, catalog: %s.', ret_val.status_code, run_id,
-                                      catalog['member_def']['id'])
+            # was the call unsuccessful. 201 is returned on success for ths one
+            if ret_val.status_code != 200:
+                # log the error
+                self.logger.error('Error: PSC sync request failure code %s for run id %s.', ret_val.status_code, run_id)
 
-                    # set the failure flag
-                    success = False
-
-                    # no need to continue
-                    break
+                # set the failure flag
+                success = False
         except Exception:
             self.logger.exception('Exception: PSC sync request failure for run id %s.', run_id)
 
@@ -148,3 +145,30 @@ class PSCDataSync:
 
         # return the success flag
         return success
+
+    @staticmethod
+    def get_unique_catalog_ids(catalog_data: dict) -> list:
+        """
+        gets the unique catalog IDs
+
+        :param catalog_data:
+        :return:
+        """
+        # get the unique keys in the dict
+        ret_val: list = list(set('-'.join(x['member_def']['id'].split('-')[:-1]) for x in catalog_data['catalogs']))
+
+        # return to the caller
+        return ret_val
+
+    def filter_catalog_past_runs(self, catalog_data: dict) -> dict:
+        """
+        filters out the non-PSC past run data
+
+        :param catalog_data:
+        :return:
+        """
+        # filter out non-PSC data from the past_runs
+        catalog_data['past_runs'] = list(filter(lambda item: (item['project_code'] in self.psc_sync_projects), catalog_data['past_runs']))
+
+        # return to the caller
+        return catalog_data

@@ -16,11 +16,12 @@ import argparse
 from src.sync.psc_sync import PSCDataSync
 
 
-def run_psc_collab_sync(run_id: str) -> bool:
+def run_psc_collab_sync(run_id: str, physical_location: str) -> bool:
     """
     Runs thd PSC collaborator sync
 
     :param run_id
+    :param physical_location:
     :return:
     """
 
@@ -28,9 +29,9 @@ def run_psc_collab_sync(run_id: str) -> bool:
     psc_sync = PSCDataSync()
 
     # initiate the PSC sync. return value of True indicates success
-    retval: bool = psc_sync.run(run_id)
+    retval: bool = psc_sync.run(run_id, physical_location)
 
-    # return to the caller. invert the return for a proper sys exit code
+    # return to the caller
     return retval
 
 
@@ -44,12 +45,13 @@ if __name__ == '__main__':
 
     # assign the expected input args
     parser.add_argument('-r', '--run_id', help='Input is a valid APSViz supervisor run ID.')
+    parser.add_argument('-r', '--physical_location', help='The name of the physical location of the compute cluster.')
 
     # parse the command line
     args = parser.parse_args()
 
     # execute the rule file(s)
-    ret_val: bool = run_psc_collab_sync(args.run_id)
+    ret_val: bool = run_psc_collab_sync(args.run_id, args.physical_location)
 
     # exit with pass/fail
     sys.exit(0)

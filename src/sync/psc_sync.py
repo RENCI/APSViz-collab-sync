@@ -50,44 +50,48 @@ class PSCDataSync:
         self.psc_sync_url: str = os.getenv('PSC_SYNC_URL')
         self.psc_auth_header: dict = {'Content-Type': 'application/json', 'Authorization': f'Bearer {os.environ.get("PSC_SYNC_TOKEN")}'}
         self.psc_sync_projects: list = os.environ.get('PSC_SYNC_PROJECTS').split(',')
+        self.psc_physical_location: str = 'PSC'
 
-    def run(self, run_id: str) -> bool:
+    def run(self, run_id: str, physical_location: str) -> bool:
         """
         Gets the catalog member records for the run id and sends them to PSC
 
         :param run_id:
+        :param physical_location:
         :return:
         """
         # init the return
         success = True
 
-        try:
-            # make the DB request to get the catalogs
-            catalog_data: dict = self.db_info.get_catalog_member_records(run_id)
+        # is this coming from PSC
+        if physical_location.startswith(self.psc_physical_location):
+            try:
+                # make the DB request to get the catalogs
+                catalog_data: dict = self.db_info.get_catalog_member_records(run_id)
 
-            # if we got data push it to PSC
-            if catalog_data is not None and catalog_data['catalogs'] is not None:
-                # clean up the past run data
-                catalog_data = self.filter_catalog_past_runs(catalog_data)
+                # if we got data push it to PSC
+                if catalog_data is not None and catalog_data['catalogs'] is not None:
+                    # clean up the past run data
+                    catalog_data = self.filter_catalog_past_runs(catalog_data)
 
-                # make sure that all catalogs are have the proper target project code
-                if self.check_project_codes(catalog_data):
-                    # make the call to push the data to PSC
-                    success = self.push_to_psc(catalog_data, run_id)
+                    # make sure that all catalogs are have the proper target project code
+                    if self.check_project_codes(catalog_data):
+                        # make the call to push the data to PSC
+                        success = self.push_to_psc(catalog_data, run_id)
 
-                    # did it fail
-                    if not success:
-                        self.logger.warning('Error: PSC sync failure for run id %s.', run_id)
+                        # did it fail
+                        if not success:
+                            self.logger.warning('Error: PSC sync failure for run id %s.', run_id)
+                    else:
+                        self.logger.warning('Warning: One or more catalogs for run id %s were not for PSC.', run_id)
                 else:
-                    self.logger.warning('Warning: One or more catalogs for run id %s were not for PSC.', run_id)
-            else:
-                self.logger.warning('Warning: No records found in the database for run id %s.', run_id)
+                    self.logger.warning('Warning: No records found in the database for run id %s.', run_id)
 
-        except Exception:
-            self.logger.exception('Failed to get sync data from data base for run id %s.', run_id)
+            except Exception:
+                self.logger.exception('Failed to get sync data from data base for run id %s.', run_id)
 
-            # set the failure code
-            success = False
+                # set the failure code
+                success = False
 
         # return the data to the caller
         return success

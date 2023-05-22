@@ -88,10 +88,12 @@ class PSCDataSync:
                     self.logger.warning('Warning: No records found in the database for run id %s.', run_id)
 
             except Exception:
-                self.logger.exception('Failed to get sync data from data base for run id %s.', run_id)
+                self.logger.exception('Failed to get sync data from the database for run id %s.', run_id)
 
                 # set the failure code
                 success = False
+        else:
+            self.logger.debug('%s is not a %s run.', run_id, self.psc_physical_location)
 
         # return the data to the caller
         return success

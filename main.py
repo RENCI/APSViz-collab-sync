@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     # assign the expected input args
     parser.add_argument('-r', '--run_id', help='Input is a valid APSViz supervisor run ID.')
-    parser.add_argument('-r', '--physical_location', help='The name of the physical location of the compute cluster.')
+    parser.add_argument('-p', '--physical_location', help='The name of the physical location of the compute cluster.')
 
     # parse the command line
     args = parser.parse_args()

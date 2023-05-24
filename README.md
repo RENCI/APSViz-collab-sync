@@ -17,7 +17,7 @@ Synchronizes data created by the various APSViz applications and processes with 
 [![RENCI License](https://img.shields.io/badge/License-RENCI-blue.svg)](https://renci.org/)
 #### Components and versions...
 [![Python](https://img.shields.io/badge/Python-3.11.3-orange)](https://github.com/PyCQA/pylint)
-[![Linting Pylint](https://img.shields.io/badge/Pylint-%202.17.3-yellowgreen)](https://github.com/PyCQA/pylint)
+[![Linting Pylint](https://img.shields.io/badge/Pylint-%202.17.4-yellowgreen)](https://github.com/PyCQA/pylint)
 [![Pytest](https://img.shields.io/badge/Pytest-%207.3.1-yellowgreen)](https://github.com/pytest-dev/pytest)
 #### Build status...
 [![Pylint and Pytest](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/pylint-pytest.yml/badge.svg)](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/pylint-test.yml)

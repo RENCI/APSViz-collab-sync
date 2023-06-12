@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 ![image not found](renci-logo.png "RENCI")
 
 # APSViz-Collab-sync
-Synchronizes data created by the various APSViz applications and processes with collaborators.
+Synchronizes data created by the various APSViz services and applications and processes with collaborators.
 
 #### Licenses...
 [![MIT License](https://img.shields.io/badge/License-MIT-orange.svg)](https://github.com/RENCI/APSVIZ-Supervisor/tree/master/LICENSES)
@@ -24,7 +24,7 @@ Synchronizes data created by the various APSViz applications and processes with 
 [![Build and push the Docker image](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/image-push.yml/badge.svg)](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/image-push.yml)
 
 ## Description
-This product is designed to synchronize data with collaborators.
+This [APSViz-Supervisor](https://github.com/RENCI/APSVIZ-Supervisor) component is designed to synchronize APSViz data with collaborators.
 
 There are GitHub actions to maintain code quality in this repo:
  - Pylint (minimum score of 10/10 to pass),

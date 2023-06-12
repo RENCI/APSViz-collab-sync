@@ -12,15 +12,15 @@ SPDX-License-Identifier: MIT
 Synchronizes data created by the various APSViz applications and processes with collaborators.
 
 #### Licenses...
-[![MIT License](https://img.shields.io/badge/License-MIT-red.svg)](https://github.com/RENCI/APSVIZ-Supervisor/blob/master/LICENSE)
+[![MIT License](https://img.shields.io/badge/License-MIT-orange.svg)](https://github.com/RENCI/APSVIZ-Supervisor/tree/master/LICENSES)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
 [![RENCI License](https://img.shields.io/badge/License-RENCI-blue.svg)](https://renci.org/)
 #### Components and versions...
-[![Python](https://img.shields.io/badge/Python-3.11.3-orange)](https://github.com/PyCQA/pylint)
-[![Linting Pylint](https://img.shields.io/badge/Pylint-%202.17.4-yellowgreen)](https://github.com/PyCQA/pylint)
-[![Pytest](https://img.shields.io/badge/Pytest-%207.3.1-yellowgreen)](https://github.com/pytest-dev/pytest)
+[![Python](https://img.shields.io/badge/Python-3.11.3-orange)](https://github.com/python/cpython)
+[![Linting Pylint](https://img.shields.io/badge/Pylint-%202.17.4-yellow)](https://github.com/PyCQA/pylint)
+[![Pytest](https://img.shields.io/badge/Pytest-%207.3.2-blue)](https://github.com/pytest-dev/pytest)
 #### Build status...
-[![Pylint and Pytest](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/pylint-pytest.yml/badge.svg)](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/pylint-test.yml)
+[![Pylint and Pytest](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/pylint-pytest.yml/badge.svg)](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/pylint-pytest.yml)
 [![Build and push the Docker image](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/image-push.yml/badge.svg)](https://github.com/RENCI/APSViz-collab-sync/actions/workflows/image-push.yml)
 
 ## Description

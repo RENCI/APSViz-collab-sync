@@ -12,11 +12,11 @@ SPDX-License-Identifier: MIT
 Synchronizes data created by the various APSViz services and applications and processes with collaborators.
 
 #### Licenses...
-[![MIT License](https://img.shields.io/badge/License-MIT-orange.svg)](https://github.com/RENCI/APSVIZ-Supervisor/tree/master/LICENSES)
+[![MIT License](https://img.shields.io/badge/License-MIT-orange.svg)](https://github.com/RENCI/APSVIZ-Supervisor/tree/master/LICENSE)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-[![RENCI License](https://img.shields.io/badge/License-RENCI-blue.svg)](https://renci.org/)
+[![RENCI License](https://img.shields.io/badge/License-RENCI-blue.svg)](https://www.renci.org/)
 #### Components and versions...
-[![Python](https://img.shields.io/badge/Python-3.11.3-orange)](https://github.com/python/cpython)
+[![Python](https://img.shields.io/badge/Python-3.11.4-orange)](https://github.com/python/cpython)
 [![Linting Pylint](https://img.shields.io/badge/Pylint-%202.17.4-yellow)](https://github.com/PyCQA/pylint)
 [![Pytest](https://img.shields.io/badge/Pytest-%207.3.2-blue)](https://github.com/pytest-dev/pytest)
 #### Build status...

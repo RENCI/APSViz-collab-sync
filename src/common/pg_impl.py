@@ -48,13 +48,14 @@ class PGImplementation(PGUtilsMultiConnect):
         # clean up connections and cursors
         PGUtilsMultiConnect.__del__(self)
 
-    def get_catalog_member_records(self, run_id: str = None, project_code: str = None, limit: int = None) -> dict:
+    def get_catalog_member_records(self, run_id: str = None, project_code: str = None, filter_event_type: str = None, limit: int = None) -> dict:
         """
         gets the apsviz catalog member record for the run id passed. the SP default
         record count returned can be overridden.
 
         :param run_id:
         :param project_code:
+        :param filter_event_type:
         :param limit:
         :return:
         """
@@ -74,6 +75,12 @@ class PGImplementation(PGUtilsMultiConnect):
         else:
             project_code = ', _project_code := NULL'
 
+        # did we get a filter event type
+        if filter_event_type is not None:
+            filter_event_type = f", _filter_event_type := '{filter_event_type}'"
+        else:
+            filter_event_type = ', _filter_event_type := NULL'
+
         # did we get a limit
         if limit is not None:
             limit = f', _limit := {limit}'
@@ -81,7 +88,7 @@ class PGImplementation(PGUtilsMultiConnect):
             limit = ', _limit := NULL'
 
         # create the sql. note we are appending a '%' wildcard to get all products for this run
-        sql: str = f"SELECT public.get_catalog_member_records({run_id}{project_code}{limit});"
+        sql: str = f"SELECT public.get_catalog_member_records({run_id}{project_code}{filter_event_type}{limit});"
 
         # get the layer list
         ret_val = self.exec_sql('apsviz', sql)

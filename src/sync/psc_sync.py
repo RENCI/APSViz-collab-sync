@@ -67,7 +67,7 @@ class PSCDataSync:
         if physical_location.startswith(self.psc_physical_location):
             try:
                 # make the DB request to get the catalogs
-                catalog_data: dict = self.db_info.get_catalog_member_records(run_id)
+                catalog_data: dict = self.db_info.get_catalog_member_records(run_id=run_id, filter_event_type='nowcast')
 
                 # if we got data push it to PSC
                 if catalog_data is not None and catalog_data['catalogs'] is not None:

@@ -71,6 +71,13 @@ def test_get_catalogs():
     assert catalog_data != -1 and 'catalogs' in catalog_data and 'past_runs' in catalog_data
     assert len(catalog_data['catalogs']) >= 1 and len(catalog_data['past_runs']) >= 1
 
+    # get the catalog data, this time use a nowcast run filtering out the nowcast data
+    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(run_id='4409-008-nowcast', filter_event_type='nowcast')
+
+    # check the record counts
+    assert catalog_data != -1 and catalog_data['catalogs'] is None
+    assert len(catalog_data['past_runs']) >= 1
+
     # set a limit
     limit = 5
 

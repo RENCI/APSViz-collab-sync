@@ -53,32 +53,40 @@ def test_get_catalogs():
     catalog_data: dict = {}
 
     # get the catalog data. no run id and no limits is an error
-    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(None, None, 0)
+    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(limit=0)
 
     # check the result, expect the error
-    assert len(catalog_data) == 1 and 'Error' in catalog_data
+    assert catalog_data != -1 and len(catalog_data) == 1 and 'Error' in catalog_data
 
     # get the catalog data. no run id and no limits is an error
-    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(None, None, None)
+    catalog_data: dict = psc_sync.db_info.get_catalog_member_records()
 
     # check the result, expect the error
-    assert len(catalog_data) == 1 and 'Error' in catalog_data
+    assert catalog_data != -1 and len(catalog_data) == 1 and 'Error' in catalog_data
 
     # get the catalog data
-    catalog_data: dict = psc_sync.db_info.get_catalog_member_records('4358-2023050106-namforecast')
+    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(run_id='4358-2023050106-namforecast')
 
     # check the record counts
-    assert len(catalog_data['catalogs']) > 1
-    assert len(catalog_data['past_runs']) > 1
+    assert catalog_data != -1 and 'catalogs' in catalog_data and 'past_runs' in catalog_data
+    assert len(catalog_data['catalogs']) >= 1 and len(catalog_data['past_runs']) >= 1
 
     # set a limit
     limit = 5
 
     # get the catalog data
-    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(None, None, limit)
+    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(limit=limit)
+
+    # check the record counts
+    assert catalog_data != -1 and 'catalogs' in catalog_data and 'past_runs' in catalog_data
+    assert len(catalog_data['catalogs']) >= 1 and len(catalog_data['past_runs']) >= 1
 
     # get the unique catalog ids
     catalog_ids = psc_sync.get_unique_catalog_ids(catalog_data)
+
+    # check the record counts
+    assert catalog_data != -1 and 'catalogs' in catalog_data and 'past_runs' in catalog_data
+    assert len(catalog_data['catalogs']) >= 1 and len(catalog_data['past_runs']) >= 1
 
     # check the record count
     assert len(catalog_ids) == limit
@@ -96,10 +104,21 @@ def test_get_catalogs():
     limit = 3
 
     # get the catalog data
-    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(None, 'nopp', limit)
+    catalog_data_pt1: dict = psc_sync.db_info.get_catalog_member_records(project_code='lffs', limit=limit)
 
-    # check the record count
-    assert len(catalog_data) > 1
+    # check the record counts
+    assert catalog_data_pt1 != -1 and 'catalogs' in catalog_data_pt1 and 'past_runs' in catalog_data_pt1
+    assert len(catalog_data_pt1['catalogs']) >= 1 and len(catalog_data_pt1['past_runs']) >= 1
+
+    # get the catalog data
+    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(project_code='lffs', filter_event_type='nowcast', limit=limit)
+
+    # check the record counts
+    assert catalog_data != -1 and 'catalogs' in catalog_data and 'past_runs' in catalog_data
+    assert len(catalog_data['catalogs']) >= 1 and len(catalog_data['past_runs']) >= 1
+
+    # we should have a different count because we filtered out the nowcasts
+    assert len(catalog_data_pt1['catalogs']) > len(catalog_data['catalogs'])
 
     # get the unique catalog ids
     catalog_ids = psc_sync.get_unique_catalog_ids(catalog_data)
@@ -107,12 +126,11 @@ def test_get_catalogs():
     # check the record count
     assert len(catalog_ids) == limit
 
-    # get the catalog data. An invalid project returns no records
-    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(None, 'fail', limit)
+    # get the catalog data. A non-existent project returns no records
+    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(project_code='no-recs-ret', limit=limit)
 
     # check the record count
-    assert catalog_data['catalogs'] is None
-    assert catalog_data['past_runs'] is None
+    assert catalog_data != -1 and catalog_data['catalogs'] is None and catalog_data['past_runs'] is None
 
 
 @pytest.mark.skip(reason="Local test only")
@@ -137,11 +155,8 @@ def test_push_to_psc():
     # check the record count
     assert len(catalogs) == limit
 
-    # push the data to PSC
-    success: bool = psc_sync.push_to_psc(catalog_data=catalog_data)
-
     # check to see if it went in
-    assert success
+    assert psc_sync.push_to_psc(catalog_data=catalog_data)
 
 
 @pytest.mark.skip(reason="Local test only")

@@ -11,6 +11,7 @@
     Author: Phil Owen, 5/1/2023
 """
 import pytest
+
 from src.common.pg_impl import PGImplementation
 from src.sync.psc_sync import PSCDataSync
 

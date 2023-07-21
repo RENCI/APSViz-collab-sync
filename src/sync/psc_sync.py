@@ -52,6 +52,9 @@ class PSCDataSync:
         self.psc_sync_projects: list = os.environ.get('PSC_SYNC_PROJECTS').split(',')
         self.psc_physical_location: str = 'PSC'
 
+        # get the system we are running on
+        self.system = os.getenv('SYSTEM', "Not set")
+
     def run(self, run_id: str, physical_location: str) -> bool:
         """
         Gets the catalog member records for the run id and sends them to PSC
@@ -177,6 +180,9 @@ class PSCDataSync:
         if catalog_data['past_runs'] is not None:
             # filter out non-PSC data from the past_runs
             catalog_data['past_runs'] = list(filter(lambda item: (item['project_code'] in self.psc_sync_projects), catalog_data['past_runs']))
+
+        # add in the system this is coming from
+        catalog_data['system'] = self.system
 
         # return to the caller
         return catalog_data

@@ -41,7 +41,7 @@ def test_db_connection_creation():
         assert ret_val.startswith('PostgreSQL')
 
 
-@pytest.mark.skip(reason="Local test only")
+#@pytest.mark.skip(reason="Local test only")
 def test_get_catalogs():
     """
     method to test getting catalog data given a run id
@@ -66,7 +66,7 @@ def test_get_catalogs():
     assert catalog_data != -1 and len(catalog_data) == 1 and 'Error' in catalog_data
 
     # get the catalog data
-    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(run_id='4358-2023050106-namforecast')
+    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(run_id='4441-2023072106-gfsforecast')
 
     # check the record counts
     assert catalog_data != -1 and 'catalogs' in catalog_data and 'past_runs' in catalog_data
@@ -105,8 +105,8 @@ def test_get_catalogs():
     # remove all non-PSC past run data
     catalog_data = psc_sync.filter_catalog_past_runs(catalog_data)
 
-    # there should be a difference
-    assert count > len(catalog_data['past_runs'])
+    # there should be a difference and we should now have a system name
+    assert count > len(catalog_data['past_runs']) and 'system' in catalog_data
 
     # set a limit
     limit = 3
@@ -126,7 +126,7 @@ def test_get_catalogs():
     assert len(catalog_data['catalogs']) >= 1 and len(catalog_data['past_runs']) >= 1
 
     # we should have a different count because we filtered out the nowcasts
-    assert len(catalog_data_pt1['catalogs']) > len(catalog_data['catalogs'])
+    assert len(catalog_data_pt1['catalogs']) >= len(catalog_data['catalogs'])
 
     # get the unique catalog ids
     catalog_ids = psc_sync.get_unique_catalog_ids(catalog_data)

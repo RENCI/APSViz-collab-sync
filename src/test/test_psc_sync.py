@@ -41,7 +41,7 @@ def test_db_connection_creation():
         assert ret_val.startswith('PostgreSQL')
 
 
-#@pytest.mark.skip(reason="Local test only")
+@pytest.mark.skip(reason="Local test only")
 def test_get_catalogs():
     """
     method to test getting catalog data given a run id
@@ -105,7 +105,7 @@ def test_get_catalogs():
     # remove all non-PSC past run data
     catalog_data = psc_sync.filter_catalog_past_runs(catalog_data)
 
-    # there should be a difference and we should now have a system name
+    # there should be a data difference and now have a system name
     assert count > len(catalog_data['past_runs']) and 'system' in catalog_data
 
     # set a limit

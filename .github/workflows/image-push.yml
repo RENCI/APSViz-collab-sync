@@ -60,4 +60,4 @@ jobs:
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           region: us-east-2
           local-image: ${{ env.REGISTRY }}:${{ steps.get_version.outputs.VERSION }}
-          image: apsviz-archiver:latest, apsviz-archiver:${{ steps.get_version.outputs.VERSION }}
+          image: apsviz-collab-sync:latest, apsviz-collab-sync:${{ steps.get_version.outputs.VERSION }}

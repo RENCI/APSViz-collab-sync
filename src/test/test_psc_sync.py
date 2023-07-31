@@ -214,5 +214,5 @@ def test_run():
     # get the catalog data and send it to PSC
     success: bool = psc_sync.run('4443-009-trackRight50x', 'TWI')  #
 
-    # although this is a invalid run id this should pass (with a logged warning of not found)
+    # although this is an invalid run id this should pass (with a logged warning of not found)
     assert not success

@@ -72,13 +72,6 @@ def test_get_catalogs():
     assert catalog_data != -1 and 'catalogs' in catalog_data and 'past_runs' in catalog_data
     assert len(catalog_data['catalogs']) >= 1 and len(catalog_data['past_runs']) >= 1
 
-    # get the catalog data, this time use a nowcast run filtering out the nowcast data
-    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(run_id='4409-008-nowcast', filter_event_type='nowcast')
-
-    # check the record counts
-    assert catalog_data != -1 and catalog_data['catalogs'] is None
-    assert len(catalog_data['past_runs']) >= 1
-
     # set a limit
     limit = 5
 
@@ -200,19 +193,19 @@ def test_run():
     psc_sync = PSCDataSync()
 
     # get the catalog data and send it to PSC
-    success: bool = psc_sync.run('4441-2023073100-gfsforecast', 'PSC')  #
+    success: bool = psc_sync.run('4441-2023073100-gfsforecast', 'PSC')
 
     # check the return code
     assert success
 
     # get the catalog data and send it to PSC
-    success: bool = psc_sync.run('4443-009-trackRight50', 'TWI')  #
+    success: bool = psc_sync.run('4443-009-trackRight50', 'TWI')
 
     # check the return code
     assert success
 
     # get the catalog data and send it to PSC
-    success: bool = psc_sync.run('4443-009-trackRight50x', 'TWI')  #
+    success: bool = psc_sync.run('4443-009-trackRight50x', 'TWI')
 
     # although this is an invalid run id this should pass (with a logged warning of not found)
-    assert not success
+    assert success

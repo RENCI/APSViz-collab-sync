@@ -50,7 +50,7 @@ class PSCDataSync:
         self.psc_sync_url: str = os.getenv('PSC_SYNC_URL')
         self.psc_auth_header: dict = {'Content-Type': 'application/json', 'Authorization': f'Bearer {os.environ.get("PSC_SYNC_TOKEN")}'}
         self.psc_sync_projects: list = os.environ.get('PSC_SYNC_PROJECTS').split(',')
-        self.psc_physical_location: str = 'PSC'
+        self.psc_physical_location: str = ['PSC', 'TWI']
 
         # get the system we are running on
         self.system = os.getenv('SYSTEM', "Not set")
@@ -67,7 +67,7 @@ class PSCDataSync:
         success = True
 
         # is this coming from PSC
-        if physical_location.startswith(self.psc_physical_location):
+        if physical_location in self.psc_physical_location:
             try:
                 # make the DB request to get the catalogs
                 catalog_data: dict = self.db_info.get_catalog_member_records(run_id=run_id, filter_event_type='nowcast')
@@ -139,7 +139,7 @@ class PSCDataSync:
             # execute the post
             ret_val = requests.post(self.psc_sync_url, headers=self.psc_auth_header, json=catalog_data, timeout=10)
 
-            # was the call unsuccessful. 201 is returned on success for ths one
+            # was the call unsuccessful
             if ret_val.status_code != 200:
                 # log the error
                 self.logger.error('Error: PSC sync request failure code %s for run id %s.', ret_val.status_code, run_id)

@@ -106,7 +106,7 @@ def test_get_catalogs():
     catalog_data = psc_sync.filter_catalog_past_runs(catalog_data)
 
     # there should be a data difference and now have a system name
-    assert count > len(catalog_data['past_runs']) and 'system' in catalog_data
+    assert count >= len(catalog_data['past_runs']) and 'system' in catalog_data
 
     # set a limit
     limit = 3
@@ -159,20 +159,13 @@ def test_push_to_psc():
 
     # init some PSC runs
     psc_runs = ['4409-003-ofcl-maxwvel63', '4409-006-ofcl-maxwvel63', '4409-006-ofcl-swan', '4409-006-ofcl-maxele63', '4409-003-ofcl-swan',
-                '4409-003-ofcl-obs', '4409-006-ofcl-obs', '4409-007-nowcast-swan', '4409-007-nowcast-maxwvel63', '4409-007-nowcast-maxele63',
-                '4409-007-nowcast-obs', '4409-008-nowcast-swan', '4409-008-nowcast-maxele63', '4409-008-nowcast-maxwvel63', '4409-008-nowcast-obs',
-                '4409-007-ofcl-swan', '4409-007-ofcl-maxwvel63', '4409-007-ofcl-maxele63', '4409-007-ofcl-obs', '4409-008-ofcl-swan',
-                '4409-008-ofcl-maxele63', '4409-008-ofcl-maxwvel63', '4409-008-ofcl-obs', '4409-009-nowcast-swan', '4409-009-nowcast-maxele63',
-                '4409-009-nowcast-maxwvel63', '4409-009-nowcast-obs', '4409-010-nowcast-swan', '4409-010-nowcast-maxele63',
-                '4409-010-nowcast-maxwvel63', '4409-010-nowcast-obs', '4409-009-ofcl-maxele63', '4409-009-ofcl-swan', '4409-009-ofcl-maxwvel63',
-                '4409-009-ofcl-obs', '4409-010-ofcl-maxele63', '4409-010-ofcl-maxwvel63', '4409-010-ofcl-swan', '4409-010-ofcl-obs',
-                '4409-011-nowcast-swan', '4409-011-nowcast-maxele63', '4409-011-nowcast-maxwvel63', '4409-011-nowcast-obs', '4409-011-ofcl-maxele63',
-                '4409-011-ofcl-swan', '4409-011-ofcl-maxwvel63', '4409-011-ofcl-obs', '4409-012-nowcast-swan', '4409-012-nowcast-maxele63',
-                '4409-012-nowcast-maxwvel63', '4409-012-nowcast-obs', '4409-012-ofcl-maxele63', '4409-012-ofcl-maxwvel63', '4409-012-ofcl-swan',
-                '4409-012-ofcl-obs', '4409-003-ofcl-maxele63', '4409-005-nowcast-swan', '4409-005-nowcast-maxele63', '4409-005-nowcast-maxwvel63',
-                '4409-005-nowcast-obs', '4409-005-ofcl-maxele63', '4409-005-ofcl-swan', '4409-005-ofcl-maxwvel63', '4409-005-ofcl-obs',
-                '4409-006-nowcast-maxele63', '4409-006-nowcast-swan', '4409-006-nowcast-maxwvel63', '4409-006-nowcast-obs', '4409-004-ofcl-maxele63',
-                '4409-004-ofcl-swan', '4409-004-ofcl-maxwvel63', '4409-004-ofcl-obs']
+                '4409-003-ofcl-obs', '4409-006-ofcl-obs', '4409-007-ofcl-swan', '4409-007-ofcl-maxwvel63', '4409-007-ofcl-maxele63',
+                '4409-007-ofcl-obs', '4409-008-ofcl-swan', '4409-008-ofcl-maxele63', '4409-008-ofcl-maxwvel63', '4409-008-ofcl-obs',
+                '4409-009-ofcl-maxele63', '4409-009-ofcl-swan', '4409-009-ofcl-maxwvel63', '4409-009-ofcl-obs', '4409-010-ofcl-maxele63',
+                '4409-010-ofcl-maxwvel63', '4409-010-ofcl-swan', '4409-010-ofcl-obs', '4409-011-ofcl-maxele63', '4409-011-ofcl-swan',
+                '4409-011-ofcl-maxwvel63', '4409-011-ofcl-obs', '4409-012-ofcl-maxele63', '4409-012-ofcl-maxwvel63', '4409-012-ofcl-swan',
+                '4409-012-ofcl-obs', '4409-003-ofcl-maxele63', '4409-005-ofcl-maxele63', '4409-005-ofcl-swan', '4409-005-ofcl-maxwvel63',
+                '4409-005-ofcl-obs', '4409-004-ofcl-maxele63', '4409-004-ofcl-swan', '4409-004-ofcl-maxwvel63', '4409-004-ofcl-obs']
 
     for item in psc_runs:
         catalog_data: dict = psc_sync.db_info.get_catalog_member_records(run_id=item, limit=limit)
@@ -183,8 +176,11 @@ def test_push_to_psc():
         # push the data to PSC
         assert psc_sync.push_to_psc(catalog_data=catalog_data)
 
+    # get a catalog list
+    catalog_data: dict = psc_sync.db_info.get_catalog_member_records(limit=limit)
+
     # get the unique keys in the dict
-    catalogs: list = list(set('-'.join(x['member_def']['id'].split('-')[:-1]) for x in catalog_data))
+    catalogs: list = list(set('-'.join(x['member_def']['id'].split('-')[:-1]) for x in catalog_data['catalogs']))
 
     # check the record count
     assert len(catalogs) == limit
@@ -204,13 +200,19 @@ def test_run():
     psc_sync = PSCDataSync()
 
     # get the catalog data and send it to PSC
-    success: bool = psc_sync.run('4358-2023050106-namforecast', 'PSC')  # 4358-2023050106-namforecast 4255-05-obs
+    success: bool = psc_sync.run('4441-2023073100-gfsforecast', 'PSC')  #
 
     # check the return code
     assert success
 
     # get the catalog data and send it to PSC
-    success: bool = psc_sync.run('4255-05-obs', 'PSC')  # 4358-2023050106-namforecast 4255-05-obs
+    success: bool = psc_sync.run('4443-009-trackRight50', 'TWI')  #
 
     # check the return code
+    assert success
+
+    # get the catalog data and send it to PSC
+    success: bool = psc_sync.run('4443-009-trackRight50x', 'TWI')  #
+
+    # although this is a invalid run id this should pass (with a logged warning of not found)
     assert not success

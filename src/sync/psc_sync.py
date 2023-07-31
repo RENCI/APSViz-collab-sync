@@ -50,7 +50,7 @@ class PSCDataSync:
         self.psc_sync_url: str = os.getenv('PSC_SYNC_URL')
         self.psc_auth_header: dict = {'Content-Type': 'application/json', 'Authorization': f'Bearer {os.environ.get("PSC_SYNC_TOKEN")}'}
         self.psc_sync_projects: list = os.environ.get('PSC_SYNC_PROJECTS').split(',')
-        self.psc_physical_location: str = ['PSC', 'TWI']
+        self.psc_physical_location: list = ['PSC', 'TWI']
 
         # get the system we are running on
         self.system = os.getenv('SYSTEM', "Not set")
@@ -70,7 +70,7 @@ class PSCDataSync:
         if physical_location in self.psc_physical_location:
             try:
                 # make the DB request to get the catalogs
-                catalog_data: dict = self.db_info.get_catalog_member_records(run_id=run_id, filter_event_type='nowcast')
+                catalog_data: dict = self.db_info.get_catalog_member_records(run_id=run_id)  # , filter_event_type='nowcast'
 
                 # if we got data push it to PSC
                 if catalog_data is not None and catalog_data['catalogs'] is not None:

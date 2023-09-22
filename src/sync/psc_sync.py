@@ -85,6 +85,8 @@ class PSCDataSync:
                         # did it fail
                         if not success:
                             self.logger.warning('Error: PSC sync failure for run id %s.', run_id)
+                        else:
+                            self.logger.info('PSC synced for run id %s.', run_id)
                     else:
                         self.logger.warning('Warning: One or more catalogs for run id %s were not for PSC.', run_id)
                 else:

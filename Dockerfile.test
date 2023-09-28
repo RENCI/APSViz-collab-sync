@@ -8,7 +8,7 @@
 # This Dockerfile is used to build the APSVIZ-Collab-sync image
 
 # leverage the renci python base image
-FROM python:3.11.4-slim
+FROM python:3.11.5-slim
 
 # update the image base
 RUN apt-get update && apt-get -y upgrade
@@ -34,7 +34,7 @@ COPY .pylintrc .pylintrc
 #ENV TESTDATA_PATH /data/tmp
 ENV PYTHONPATH="/repo/APSVIZ-Collab-sync:$PYTHONPATH"
 
-WORKDIR /repo/APSVIZ-Collab-sync/src/test
+WORKDIR /repo/APSVIZ-Collab-sync
 
 # start the tests
 # CMD pytest
